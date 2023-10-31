@@ -2,9 +2,10 @@ from rest_framework.decorators import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
 from core.authentications import JWTAuthentication
 from core.models import UserModel
-
 from core.serializers import UserModelSerializer
 from core.utils import populate_database_with_token
 
@@ -22,7 +23,7 @@ class RegisterAPIView(APIView):
         token = JWTAuthentication.generate_token(user.id)
         populate_database_with_token(user.id, token)
         return Response({"token": token, 'id': user.id},
-                        status=status.HTTP_201_CREATED)
+                        status=status.HTTP_200_OK)
 
 
 class LoginAPIView(APIView):
@@ -46,4 +47,15 @@ class LoginAPIView(APIView):
         # generate_token here
         token = JWTAuthentication.generate_token(user.pk)
         populate_database_with_token(user.id, token)
-        return Response({"token": token, 'id': user.pk})
+        return Response({"token": token, 'id': user.pk},
+                        status=status.HTTP_200_OK)
+
+
+class UserProfilAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        instance = request.user
+        serializer = UserModelSerializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)

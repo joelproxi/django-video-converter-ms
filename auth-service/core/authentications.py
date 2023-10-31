@@ -31,17 +31,15 @@ class JWTAuthentication(BaseAuthentication):
 
         user = UserModel.objects.filter(id=user_id).first()
         if not TokenModel.objects.filter(
-                    user_id=user.id,
-                    token=jwt_token,
-                    expired_at__gt=datetime.now(tz=timezone.utc)).exists():
+                user_id=user.id,
+                token=jwt_token,
+                expired_at__gt=datetime.now(tz=timezone.utc)).exists():
             raise BaseAuthentication('Unauthenticated')
         return user, payload
 
     @staticmethod
     def get_headers(request):
-        auth = request.META.get('HTTP_AUTHORIZATION', b'')
-        if isinstance(auth, str):
-            auth = HTTP_HEADER_ENCODING(auth)
+        auth = request.META.get('HTTP_AUTHORIZATION')
         return auth
 
     @staticmethod

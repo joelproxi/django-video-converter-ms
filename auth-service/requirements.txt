@@ -7,7 +7,6 @@ djangorestframework==3.14.0
 flake8==6.1.0
 flake8-html==0.4.3
 flower==2.0.1
-Pillow==10.1.01
 PyJWT==2.8.0
 pytest==7.4.2
 pytest-django==4.5.2
